@@ -5,3 +5,6 @@ __pycache__/
 banco.db
 *.sqlite3
 *.db
+losa_testes.py
+losa_testes2.py
+losa_testes3.py
