@@ -4,16 +4,6 @@ from src.interface.gui.tela_inicio import TelaInicial
 
 
 
-
-class Tela_2(ft.Column):
-     def __init__(self):
-        super().__init__()
-        self.controls = [
-            ft.Text("tela 2"),
-            ft.Button("Botaoa"),
-        ]
-
-
 class TelaCadastrarDespesa(ft.Column):
     def __init__(self, page: ft.Page):
         super().__init__()
@@ -51,19 +41,17 @@ class TelaCadastrarDespesa(ft.Column):
         pass   
     def mudar_data(self, e):
         pass  
-
-
-
-             
+            
 
 class AppFlet():
     def __init__(self, page: ft.Page):
         self.page = page
+        page.window.min_width = 400   # Largura mínima
+        page.window.min_height = 200  # Altura mínima
         self.page.title = "Organizador de despesa (DEMO)"
-        print("aqqui")
         self.telas = [
                 TelaInicial(), # Índice 0
-                Tela_2(),      # Índice 1
+                TelaInicial(),      # Índice 1
                 TelaCadastrarDespesa(self.page),        
             ]
         
