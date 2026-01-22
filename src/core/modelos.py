@@ -10,7 +10,7 @@ class Status(Enum):
 class Tipo(Enum):
     FIXA = 'fixa'
     PARCELADA = 'parcelada'
-    UNICA = 'unica'
+    UNICA = 'única'
 
 @dataclass
 class Despesa:
@@ -43,4 +43,4 @@ class Despesa:
         # Garante que agora é datetime mesmo
         if not isinstance(self.vencimento, datetime.datetime):
              raise TypeError("Erro: O campo 'vencimento' deve ser um objeto datetime ou string válida.")
-
+        

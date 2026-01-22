@@ -3,7 +3,7 @@ import datetime
 from src.interface.gui.tela_inicio import TelaInicial
 from src.interface.gui.tela_cadastrar_despesa import TelaCadastrarDespesa
 from src.interface.gui.componentes.data_picker import Gerenciador
-
+from src.interface.gui.servicos.service_interface import GerenciadorDespesaInterface
 
             
 
@@ -19,12 +19,13 @@ class AppFlet():
         page.vertical_alignment = ft.MainAxisAlignment.START
         self.page.title = "Organizador de despesa (DEMO)"
 
+        self.gerenciador_interface = GerenciadorDespesaInterface()
         self.gerenciador = Gerenciador(self.page)
         
         self.telas = [
                 TelaInicial(), # Índice 0
                 TelaInicial(),      # Índice 1
-                TelaCadastrarDespesa(self.page, app_flet=self),        
+                TelaCadastrarDespesa(self.page, app_flet=self, gerenciador=self.gerenciador_interface),        
             ]
         
 

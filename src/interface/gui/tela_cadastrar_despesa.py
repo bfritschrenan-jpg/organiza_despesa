@@ -3,8 +3,9 @@ from datetime import datetime
 
 
 class TelaCadastrarDespesa(ft.Container):
-    def __init__(self, page: ft.Page, app_flet: object):
+    def __init__(self, page: ft.Page, app_flet: object, gerenciador:object):
         super().__init__()
+        self.gerenciador = gerenciador
         self.page_app = page
         self.app_flet = app_flet
         self.width=1200
@@ -236,6 +237,6 @@ class TelaCadastrarDespesa(ft.Container):
         descricao = self.descricao.value
         data_vencimento = self.data_vencimento.value
         qtd_parcelas = self.caixa_qtd_parcelas.value
-
+        # status = "Pendente"
+        self.gerenciador.salvar_despesa(descricao, valor, data_vencimento, tipo)
         
-        print(f"{descricao}  - {valor} - {data_vencimento} - {tipo}")
