@@ -19,6 +19,7 @@ class Despesa:
     vencimento: datetime
     status: Status
     tipo: Tipo
+    id: int = None
     
     def __post_init__(self):
         # 1. Validação de Valor

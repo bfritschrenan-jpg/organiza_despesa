@@ -19,3 +19,8 @@ class GerenciadorDespesa:
         with Db_Despesa() as banco:
            resposta = banco.salvar_despesa(despesa)
            return resposta
+        
+    def deletar_despesa(self, id):
+        with Db_Despesa() as banco:
+            resposta = banco.deleta_despesa(id)
+            return resposta

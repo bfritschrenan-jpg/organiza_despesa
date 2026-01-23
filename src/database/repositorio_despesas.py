@@ -68,3 +68,22 @@ class Db_Despesa:
             print(f"Erro ao salvar: {e}")
             self.conexao.rollback()
             return Result.erro(mensagem=f"Erro ao salvar os dados: {e}")
+        
+    def deleta_despesa(self, id):
+        sql = """
+        DELETE FROM despesas WHERE id = ?
+        """
+        try:
+            self.cursor.execute(sql, (id,))
+            # O rowcount diz quantas linhas foram afetadas
+            if self.cursor.rowcount == 0:
+                return Result.erro(mensagem="Nenhuma despesa encontrada com este ID.")
+            
+            self.conexao.commit()
+            return Result.ok(mensagem="Despesa deletada!")
+        
+        except Exception as e:
+            print(f"Erro ao deletar: {e}")
+            self.conexao.rollback()
+            return Result.erro(mensagem=f"Erro ao deletar a despesa: {e}")
+       
