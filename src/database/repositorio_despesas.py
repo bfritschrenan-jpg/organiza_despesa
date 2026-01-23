@@ -1,8 +1,10 @@
 import os
 import sqlite3
+import datetime
 from dataclasses import dataclass, field
 from src.utils.resultado import Result
-from src.core.modelos import Despesa
+from src.core.modelos import Despesa, Status, Tipo
+
 
 @dataclass
 class Db_Despesa:
@@ -87,3 +89,53 @@ class Db_Despesa:
             self.conexao.rollback()
             return Result.erro(mensagem=f"Erro ao deletar a despesa: {e}")
        
+    def editar_despesa(self, despesa: Despesa):
+        sql = """
+        UPDATE despesas 
+        SET descricao = ?, valor = ?, vencimento = ?, status = ?, tipo = ?
+        WHERE id = ?
+        """
+        parametros = (
+            despesa.descricao, 
+            despesa.valor, 
+            despesa.vencimento.date().isoformat(), 
+            despesa.status.value, 
+            despesa.tipo.value, 
+            despesa.id
+        )
+        
+        try:
+            self.cursor.execute(sql, parametros)
+            self.conexao.commit()
+            return Result.ok(mensagem="Despesa editada com sucesso!")
+        except Exception as e:
+            self.conexao.rollback()
+            return Result.erro(mensagem=f"Falha na edição: {e}")
+        
+    def ler_todas_despesa(self):
+        sql = """
+        SELECT id, descricao, valor, vencimento, status, tipo FROM despesas
+        """
+        try:
+            self.cursor.execute(sql)
+            linhas = self.cursor.fetchall() # Pega todas as linhas encontradas
+            
+            despesas = []
+            
+            for linha in linhas:
+                # Criamos um objeto Despesa para cada linha do banco
+                d = Despesa(
+                    id=linha[0],
+                    descricao=linha[1],
+                    valor=linha[2],
+                    vencimento=datetime.datetime.strptime(linha[3], "%Y-%m-%d"), # O SQLite retorna como String
+                    status=Status(linha[4]),
+                    tipo=Tipo(linha[5])
+                )
+                despesas.append(d)
+                
+            return Result.ok(dados=despesas, mensagem="Dados recuperados com sucesso") # Retorna a lista de objetos
+        
+        except Exception as e:
+            print(f"Erro ao ler banco: {e}")
+            return Result.erro(mensagem=f"Erro ao carregar despesas: {e}")

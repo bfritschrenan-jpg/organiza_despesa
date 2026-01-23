@@ -24,3 +24,14 @@ class GerenciadorDespesa:
         with Db_Despesa() as banco:
             resposta = banco.deleta_despesa(id)
             return resposta
+
+    def editar_despesa(self, despesa: Despesa):
+        with Db_Despesa() as banco:
+            resposta = banco.editar_despesa(despesa)
+            return resposta
+        
+    def ler_todas_despesas(self):
+        with Db_Despesa() as banco:
+            resposta = banco.ler_todas_despesa()
+            return resposta
+        
