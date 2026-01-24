@@ -10,13 +10,15 @@ class GerenciadorDespesaInterface:
         valor = valor.replace(".", "").replace(",", ".")
         valor = float(valor)
         
-        vencimento_obj = datetime.strptime(vencimento, "%d/%m/%Y")   # lê a string
+        print(vencimento)
+        # vencimento_obj = date.fromisoformat(vencimento)
+        vencimento_obj = datetime.strptime(vencimento, "%d/%m/%Y").date()   # lê a string
 
         data_atual = datetime.now().date()
-        vencimento_data = datetime.strptime(vencimento, "%d/%m/%Y").date()
-        if vencimento_data < data_atual:
+        # vencimento_data = datetime.strptime(vencimento, "%d/%m/%Y").date()
+        if vencimento_obj < data_atual:
             status = "atrasada"
-        elif vencimento_data == data_atual:
+        elif vencimento_obj == data_atual:
             status = "pendente"
         else:
             status = "pendente"
@@ -43,3 +45,6 @@ class GerenciadorDespesaInterface:
         else:
             print("despesa não cadastrada")
 
+    def buscar_despesas(self):
+        despesas = self.gerente_despesa.ler_todas_despesas()
+        return despesas.dados

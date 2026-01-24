@@ -1,8 +1,10 @@
 import flet as ft
-
+from datetime import date
 class TelaInicial(ft.Container):
-    def __init__(self):
+    def __init__(self, gerenciador):
+
         super().__init__()
+        self.gerenciador = gerenciador
         self.expand = True
         self.constraints=ft.BoxConstraints(min_width=350, max_width=600),
         self.alignment = ft.Alignment.CENTER
@@ -18,16 +20,10 @@ class TelaInicial(ft.Container):
             controls=[]  # Lista responsavel por agrupar o conteudo da tela.
         )
         self.content.controls.append(self.cabecalho()) # Adiciona o titúlo na tela
-
-        self.lista = ["1","2","3","4","5",] # lista para testes
-        self.cards = [self.card_despesa(nome) for nome in self.lista] # Cria a lista de cards para lançarem na tela
-        self.content.controls.extend(self.cards) # ADD os cards na lista do ListView para ser lançado na tela
-
-        # for card in self.cards: 
-        #     self.content.controls.append(card) # ADD os cards na lista do ListView para ser lançado na tela
-
+        self.cria_cards_despesa()
+        
     def mudar(self):
-        self.content.controls.append(self.card_despesa("Teste"))
+        pass
         
 
     def cabecalho(self):
@@ -47,14 +43,14 @@ class TelaInicial(ft.Container):
                     )
                 )
 
-    def card_despesa(self, nome):
-        # g = self.content.controls
-        # print(self.g)
+    def card_despesa(self, id, descricao, vencimento, valor, cor):
+        
         return ft.ShaderMask(
+                    key=id,
                     border_radius=ft.BorderRadius.all(15),
                     blend_mode=ft.BlendMode.MODULATE,
                     shader=ft.LinearGradient(
-                        colors=[ft.Colors.RED_400, ft.Colors.WHITE], # Muda as cores do gradiente
+                        colors=[cor, ft.Colors.WHITE], # Muda as cores do gradiente
                         begin=ft.Alignment.TOP_LEFT,      
                         end=ft.Alignment.BOTTOM_RIGHT,   
                     ),
@@ -69,10 +65,40 @@ class TelaInicial(ft.Container):
                                     hover_color="#B49B9B00",
                                     bgcolor=ft.Colors.GREY_400,
                                     leading=ft.Icon(ft.Icons.FOREST, color=ft.Colors.BLACK),
-                                    title=ft.Text(nome, color=ft.Colors.BLACK),
-                                    subtitle=ft.Text("data", color=ft.Colors.BLACK),
-                                    trailing=ft.Text(value="R$ 1000,00", size=24, color=ft.Colors.BLACK )
+                                    title=ft.Text(descricao, color=ft.Colors.BLACK),
+                                    subtitle=ft.Text(vencimento, color=ft.Colors.BLACK),
+                                    trailing=ft.Text(value=valor, size=24, color=ft.Colors.BLACK )
                                 )   
                     )      
                 )
 
+    def cria_cards_despesa(self):
+
+        self.lista =  self.gerenciador.buscar_despesas()
+        self.lista_card = []
+        if self.lista:
+
+            for despesa in self.lista:
+                id_card = str(despesa.id)
+                data_br = despesa.vencimento.strftime("%d/%m/%Y")
+                if despesa.status == despesa.status.ATRASADA:
+                    cor = ft.Colors.RED_400
+                elif despesa.status == despesa.status.PAGA:
+                    cor = ft.Colors.GREEN
+                else:
+                    cor = ft.Colors.WHITE
+
+                card = self.card_despesa(
+                    id=id_card, 
+                    descricao=despesa.descricao, 
+                    vencimento=data_br,
+                    valor=despesa.valor,
+                    cor= cor
+                )
+                
+                self.lista_card.append(card)
+
+
+            self.content.controls.extend(self.lista_card) # ADD os cards na lista do ListView para ser lançado na tela
+        else: 
+            print('lista vazia')

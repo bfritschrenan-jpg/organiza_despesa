@@ -23,8 +23,8 @@ class AppFlet():
         self.gerenciador = Gerenciador(self.page)
         
         self.telas = [
-                TelaInicial(), # Índice 0
-                TelaInicial(),      # Índice 1
+                TelaInicial(gerenciador=self.gerenciador_interface), # Índice 0
+                TelaInicial(gerenciador=self.gerenciador_interface),      # Índice 1
                 TelaCadastrarDespesa(self.page, app_flet=self, gerenciador=self.gerenciador_interface),        
             ]
         
