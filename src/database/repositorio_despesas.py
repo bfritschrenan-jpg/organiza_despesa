@@ -1,6 +1,7 @@
 import os
 import sqlite3
 import datetime
+from datetime import date
 from dataclasses import dataclass, field
 from src.utils.resultado import Result
 from src.core.modelos import Despesa, Status, Tipo
@@ -98,7 +99,7 @@ class Db_Despesa:
         parametros = (
             despesa.descricao, 
             despesa.valor, 
-            despesa.vencimento.date().isoformat(), 
+            despesa.vencimento.isoformat(), 
             despesa.status.value, 
             despesa.tipo.value, 
             despesa.id
@@ -128,7 +129,7 @@ class Db_Despesa:
                     id=linha[0],
                     descricao=linha[1],
                     valor=linha[2],
-                    vencimento=datetime.datetime.strptime(linha[3], "%Y-%m-%d"), # O SQLite retorna como String
+                    vencimento=datetime.datetime.strptime(linha[3], "%Y-%m-%d").date(), # O SQLite retorna como String
                     status=Status(linha[4]),
                     tipo=Tipo(linha[5])
                 )

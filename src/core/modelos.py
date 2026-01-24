@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 import datetime
+from datetime import date
 
 class Status(Enum):
     PAGA = 'paga'
@@ -16,7 +17,7 @@ class Tipo(Enum):
 class Despesa:
     descricao: str
     valor: float
-    vencimento: datetime
+    vencimento: date
     status: Status
     tipo: Tipo
     id: int = None
@@ -37,11 +38,11 @@ class Despesa:
         if isinstance(self.vencimento, str):
             try:
                 # Tenta converter 'AAAA-MM-DD' para objeto datetime
-                self.vencimento = datetime.datetime.strptime(self.vencimento, "%Y-%m-%d")
+                self.vencimento = datetime.datetime.strptime(self.vencimento, "%Y-%m-%d").date()
             except ValueError:
                 raise ValueError("Erro: Data deve estar no formato AAAA-MM-DD (ex: 2026-01-30)")
         
         # Garante que agora é datetime mesmo
-        if not isinstance(self.vencimento, datetime.datetime):
+        if not isinstance(self.vencimento, date):
              raise TypeError("Erro: O campo 'vencimento' deve ser um objeto datetime ou string válida.")
         
