@@ -56,7 +56,7 @@ class Db_Despesa:
 
         valores_despesa = (despesa.descricao, 
                            despesa.valor, 
-                           despesa.vencimento.date().isoformat(),   # Converte datetime para string ISO
+                           str(despesa.vencimento),              #.date().isoformat(),   # Converte datetime para string ISO
                            despesa.status.value,                    # Converte Enum para string 'paga'
                            despesa.tipo.value)                      # Converte Enum para string 'paga'
 
@@ -99,7 +99,7 @@ class Db_Despesa:
         parametros = (
             despesa.descricao, 
             despesa.valor, 
-            despesa.vencimento.isoformat(), 
+            str(despesa.vencimento),        #.isoformat(), 
             despesa.status.value, 
             despesa.tipo.value, 
             despesa.id
@@ -124,12 +124,11 @@ class Db_Despesa:
             despesas = []
             
             for linha in linhas:
-                # Criamos um objeto Despesa para cada linha do banco
                 d = Despesa(
                     id=linha[0],
                     descricao=linha[1],
                     valor=linha[2],
-                    vencimento=datetime.datetime.strptime(linha[3], "%Y-%m-%d").date(), # O SQLite retorna como String
+                    vencimento=date.fromisoformat(linha[3]),
                     status=Status(linha[4]),
                     tipo=Tipo(linha[5])
                 )
