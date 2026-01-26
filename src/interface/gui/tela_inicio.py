@@ -1,10 +1,13 @@
 import flet as ft
 from datetime import date
-class TelaInicial(ft.Container):
-    def __init__(self, gerenciador):
+from src.interface.gui.servicos.service_interface import GerenciadorDespesaInterface
+from src.interface.gui.tela_despesa import TelaDespesa
 
+class TelaInicial(ft.Container):
+    def __init__(self, appflet: object):
         super().__init__()
-        self.gerenciador = gerenciador
+        self.appflet = appflet
+        self.gerenciador = self.appflet.gerenciador_interface
         self.expand = True
         self.constraints=ft.BoxConstraints(min_width=350, max_width=600),
         self.alignment = ft.Alignment.CENTER
@@ -22,8 +25,21 @@ class TelaInicial(ft.Container):
         self.content.controls.append(self.cabecalho()) # Adiciona o titúlo na tela
         self.cria_cards_despesa()
         
-    def mudar(self):
-        pass
+    def mudar(self, e):
+        
+        self.appflet.container.content = TelaDespesa(self.appflet) # Cria a tela para editar a despesa
+        self.appflet.page.update() # Atualiza para mostrar a tela
+        shader_id = e.control.parent.parent.key # pega o identificador da despesa
+
+        despesa = self.lista_despesa_dict.get(shader_id) # Obetenho a despesa que vai ser atualizada/Editada
+        
+        print(despesa)
+
+        
+        for i in self.lista:
+            print(i.descricao)
+
+        print(f"ID selecionado: {shader_id}")
         
 
     def cabecalho(self):
@@ -76,6 +92,7 @@ class TelaInicial(ft.Container):
 
         self.lista =  self.gerenciador.buscar_despesas()
         self.lista_card = []
+        self.lista_despesa_dict = {}
         if self.lista:
 
             for despesa in self.lista:
@@ -96,6 +113,7 @@ class TelaInicial(ft.Container):
                     cor= cor
                 )
                 
+                self.lista_despesa_dict[id_card] = despesa
                 self.lista_card.append(card)
 
 

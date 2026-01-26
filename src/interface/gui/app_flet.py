@@ -4,7 +4,7 @@ from src.interface.gui.tela_inicio import TelaInicial
 from src.interface.gui.tela_cadastrar_despesa import TelaCadastrarDespesa
 from src.interface.gui.componentes.data_picker import Gerenciador
 from src.interface.gui.servicos.service_interface import GerenciadorDespesaInterface
-
+from src.interface.gui.tela_despesa import TelaDespesa
             
 
 class AppFlet():
@@ -23,9 +23,10 @@ class AppFlet():
         self.gerenciador = Gerenciador(self.page)
         
         self.telas = [
-                TelaInicial(gerenciador=self.gerenciador_interface), # Índice 0
-                TelaInicial(gerenciador=self.gerenciador_interface),      # Índice 1
-                TelaCadastrarDespesa(self.page, app_flet=self, gerenciador=self.gerenciador_interface),        
+                TelaInicial(appflet = self), # Índice 0
+                TelaInicial(appflet = self),      # Índice 1
+                TelaCadastrarDespesa(app_flet=self), # índice 2      
+                TelaDespesa(app_flet=self)
             ]
         
 
@@ -46,6 +47,11 @@ class AppFlet():
 
     def mudar_aba(self, e):
         indice = e.control.selected_index
+        self.container.content = self.telas[indice]
+        self.page.update()
+
+    def mudar_tela(self, indice): # Índici representa a posição da tela na lista de tela é importante saber qual a poisição para carregar a pagina certa.
+        indice = indice
         self.container.content = self.telas[indice]
         self.page.update()
 

@@ -1,10 +1,11 @@
 import flet as ft
 from datetime import datetime 
+from src.core.modelos import Despesa
 
-
-class TelaCadastrarDespesa(ft.Container):
+class TelaDespesa(ft.Container):
     def __init__(self, app_flet: object):
         super().__init__()
+        
         self.app_flet = app_flet
         self.page_app = self.app_flet.page
         self.gerenciador = self.app_flet.gerenciador_interface
@@ -25,7 +26,7 @@ class TelaCadastrarDespesa(ft.Container):
         # TITULO DA PAGINA
         self.titulo = ft.ShaderMask(                   
             content=ft.Text(
-                value="CADASTRO DE DESPESA", 
+                value="EDITAR DESPESA", 
                 size=24, 
                 weight="bold",
                 text_align=ft.TextAlign.CENTER
