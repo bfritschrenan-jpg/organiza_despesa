@@ -1,7 +1,6 @@
 import flet as ft
 from datetime import datetime 
 
-
 class TelaCadastrarDespesa(ft.Container):
     def __init__(self, app_flet: object):
         super().__init__()
@@ -237,6 +236,14 @@ class TelaCadastrarDespesa(ft.Container):
         descricao = self.descricao.value
         data_vencimento = self.data_vencimento.value
         qtd_parcelas = self.caixa_qtd_parcelas.value
-        # status = "Pendente"
-        self.gerenciador.salvar_despesa(descricao, valor, data_vencimento, tipo)
-        
+
+        if tipo == "Fixa":
+           resposta = self.gerenciador.salvar_despesa_fixa(descricao, valor, data_vencimento)
+           if resposta.sucesso == True:
+               print(resposta.sucesso)
+               self.app_flet.page.update()
+        else:
+            resposta = self.gerenciador.salvar_despesa(descricao, valor, data_vencimento, tipo, qtd_parcelas)
+            if resposta.sucesso == True:
+               print(resposta.sucesso)
+               self.app_flet.page.update()

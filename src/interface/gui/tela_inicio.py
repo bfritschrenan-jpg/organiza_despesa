@@ -1,6 +1,4 @@
 import flet as ft
-from datetime import date
-from src.interface.gui.servicos.service_interface import GerenciadorDespesaInterface
 from src.interface.gui.tela_despesa import TelaDespesa
 
 class TelaInicial(ft.Container):
@@ -26,21 +24,12 @@ class TelaInicial(ft.Container):
         self.cria_cards_despesa()
         
     def mudar(self, e):
-        
-        self.appflet.container.content = TelaDespesa(self.appflet) # Cria a tela para editar a despesa
-        self.appflet.page.update() # Atualiza para mostrar a tela
         shader_id = e.control.parent.parent.key # pega o identificador da despesa
-
         despesa = self.lista_despesa_dict.get(shader_id) # Obetenho a despesa que vai ser atualizada/Editada
-        
-        print(despesa)
 
-        
-        for i in self.lista:
-            print(i.descricao)
+        self.appflet.container.content = TelaDespesa(app_flet=self.appflet, despesa=despesa) # Cria a tela para editar a despesa
+        self.appflet.page.update() # Atualiza para mostrar a tela
 
-        print(f"ID selecionado: {shader_id}")
-        
 
     def cabecalho(self):
         return ft.ShaderMask(                   

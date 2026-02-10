@@ -26,7 +26,7 @@ class AppFlet():
                 TelaInicial(appflet = self), # Índice 0
                 TelaInicial(appflet = self),      # Índice 1
                 TelaCadastrarDespesa(app_flet=self), # índice 2      
-                TelaDespesa(app_flet=self)
+                # TelaDespesa(app_flet=self)
             ]
         
 

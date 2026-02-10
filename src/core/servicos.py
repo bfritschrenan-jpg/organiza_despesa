@@ -1,17 +1,20 @@
-from src.core.modelos import Despesa, Tipo, Status
+from src.core.modelos import Despesa, DespesaFixa, Tipo, Status
 from src.database.repositorio_despesas import Db_Despesa
 from src.utils.resultado import Result
 
 class GerenciadorDespesa:
     
-    def criar_despesa(self, descricao: str, valor: float, vencimento: str, status: str, tipo: str):
+    def criar_despesa(self, descricao: str, valor: float, vencimento: str, status: str, tipo: str, fixa_id: int = None, parcelada_id: int = None):
 
         try:
             despesa = Despesa(descricao, 
                               valor, 
                               vencimento,
                               Status(status), 
-                              Tipo(tipo))
+                              Tipo(tipo),
+                              fixa_id,
+                              parcelada_id,
+                              )
             
         except Exception as e:
             return Result.erro(f"Erro de validação: {e}")
@@ -35,3 +38,33 @@ class GerenciadorDespesa:
             resposta = banco.ler_todas_despesa()
             return resposta
         
+# CRUD FIXAS
+        
+    def criar_despesa_fixa(self, descricao: str, valor: float, dia_vencimento: int):
+        try:
+            despesa = DespesaFixa(
+                descricao=descricao,
+                valor=valor,
+                dia_vencimento=dia_vencimento
+            )
+        except Exception as e:
+            return Result.erro(f"Erro de validação: {e}")
+        
+        with Db_Despesa() as banco:
+           resposta = banco.salvar_despesa_fixa(despesa)
+           return resposta
+        
+    def deletar_despesa_fixa(self, id):
+        with Db_Despesa() as banco:
+            resposta = banco.deletar_despesa_fixa(id)
+            return resposta
+
+    def editar_despesa_fixa(self, despesa: DespesaFixa):
+        with Db_Despesa() as banco:
+            resposta = banco.editar_despesa_fixa(despesa)
+            return resposta
+        
+    def ler_todas_despesas_fixas(self):
+        with Db_Despesa() as banco:
+            resposta = banco.ler_todas_despesas_fixas()
+            return resposta

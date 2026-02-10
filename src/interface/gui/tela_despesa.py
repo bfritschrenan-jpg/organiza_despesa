@@ -1,11 +1,14 @@
 import flet as ft
 from datetime import datetime 
 from src.core.modelos import Despesa
+# from src.interface.gui.app_flet import AppFlet
+
 
 class TelaDespesa(ft.Container):
-    def __init__(self, app_flet: object):
+    def __init__(self, app_flet: object, despesa: Despesa):
         super().__init__()
-        
+        self.despesa_editar_obj = despesa
+        print(self.despesa_editar_obj.descricao)
         self.app_flet = app_flet
         self.page_app = self.app_flet.page
         self.gerenciador = self.app_flet.gerenciador_interface
@@ -41,7 +44,8 @@ class TelaDespesa(ft.Container):
 
         # CAIXA DE TEXTO DESCRIÇÃO DA DESPESA
         self.descricao = ft.TextField(
-            label = "Descrição:",
+            label = "Descrição",
+            value = self.despesa_editar_obj.descricao,
             border_radius=ft.BorderRadius.all(15),
             border_color=ft.Colors.LIGHT_BLUE,
             focused_border_color=ft.Colors.BLUE_600,
@@ -53,7 +57,7 @@ class TelaDespesa(ft.Container):
         # CAIXA DE TEXTO VALOR DA DESPESA
         self.valor =ft.TextField(
             label = "Valor da Despesa:",
-            
+            value = self.despesa_editar_obj.valor,
             border_radius=ft.BorderRadius.all(15),
             border_color=ft.Colors.LIGHT_BLUE,
             focused_border_color=ft.Colors.BLUE_600,
@@ -69,8 +73,10 @@ class TelaDespesa(ft.Container):
             )
         
         # CAIXA DE SELEÇÃO DE TIPO DE DESPESA
+        print(self.despesa_editar_obj.tipo.value),
         self.tipo = ft.Dropdown(
-            value="Única",
+           
+            value = self.despesa_editar_obj.tipo.value,
             border_radius=ft.BorderRadius.all(15),
             border_color=ft.Colors.LIGHT_BLUE,
             focused_border_color=ft.Colors.BLUE_600,
@@ -78,9 +84,9 @@ class TelaDespesa(ft.Container):
             label="Tipo de Despesa",
             width=400,
             options=[
-                ft.dropdown.Option("Fixa"),
-                ft.dropdown.Option("Única"),
-                ft.dropdown.Option("Parcelada"),
+                ft.dropdown.Option(key="fixa",text="Fixa"),
+                ft.dropdown.Option(key="única",text="Única"),
+                ft.dropdown.Option(key="parcelada",text="Parcelada"),
             ],
         ) 
 
@@ -97,11 +103,9 @@ class TelaDespesa(ft.Container):
         )
 
         # CAIXA DE TEXTO DATA DE VENCIMENTO
-        hoje = datetime.now().strftime("%d/%m/%Y") # OBTEM DATA ATUAL DO DIA
-
         self.data_vencimento = ft.TextField(
             label = "Data de Vencimento:",
-            value = hoje,
+            value = self.despesa_editar_obj.vencimento,
             border_radius=ft.BorderRadius.all(15),
             border_color=ft.Colors.LIGHT_BLUE,
             focused_border_color=ft.Colors.BLUE_600,
@@ -139,7 +143,7 @@ class TelaDespesa(ft.Container):
                 height=45,   # Altura definida para notar a centralização
                 align=ft.Alignment.CENTER,
                 content=ft.Text("Salvar Despesa", size=20,), 
-                on_click= self.salva_despesa
+                on_click= self.editar_despesa
             )
         )
 
@@ -232,12 +236,13 @@ class TelaDespesa(ft.Container):
         self.data_vencimento.update()
           
     # FUNÇÃO RESPONSAVEL POR CAPTA OS DADOS E ENVIAR PARA O SERVICE SALVAR AS DESPESAS
-    def salva_despesa(self, e):
+    def editar_despesa(self, e):
+        despesa = self.despesa_editar_obj
         tipo = self.tipo.value
         valor = self.valor.value
         descricao = self.descricao.value
         data_vencimento = self.data_vencimento.value
         qtd_parcelas = self.caixa_qtd_parcelas.value
         # status = "Pendente"
-        self.gerenciador.salvar_despesa(descricao, valor, data_vencimento, tipo)
+        # self.gerenciador.editar_despesa(descricao, valor, data_vencimento, tipo)
         

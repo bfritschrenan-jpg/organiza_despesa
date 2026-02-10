@@ -4,7 +4,7 @@ import datetime
 from datetime import date
 from dataclasses import dataclass, field
 from src.utils.resultado import Result
-from src.core.modelos import Despesa, Status, Tipo
+from src.core.modelos import Despesa, DespesaFixa, Status, Tipo
 
 
 @dataclass
@@ -39,18 +39,33 @@ class Db_Despesa:
         print("Porta do banco trancada com sucesso!")
 
     def _criar_tabela(self):
-        query = """
+        query_fixas = """
+        CREATE TABLE IF NOT EXISTS fixas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            descricao TEXT NOT NULL,
+            valor REAL NOT NULL,
+            dia_vencimento REAL NOT NULL
+        )
+        """
+        self.cursor.execute(query_fixas)
+        self.conexao.commit()
+
+        query_despesas = """
         CREATE TABLE IF NOT EXISTS despesas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             descricao TEXT NOT NULL,
             valor REAL NOT NULL,
             vencimento TEXT NOT NULL,
             status TEXT NOT NULL,
-            tipo TEXT NOT NULL
+            tipo TEXT NOT NULL,
+            fixa_id INTEGER,
+            parcelada_id INTEGER,
+            FOREIGN KEY (fixa_id) REFERENCES fixas (id)
         )
         """
-        self.cursor.execute(query)
+        self.cursor.execute(query_despesas)
         self.conexao.commit()
+        
 
     def salvar_despesa(self, despesa: Despesa):
 
@@ -58,10 +73,13 @@ class Db_Despesa:
                            despesa.valor, 
                            str(despesa.vencimento),              #.date().isoformat(),   # Converte datetime para string ISO
                            despesa.status.value,                    # Converte Enum para string 'paga'
-                           despesa.tipo.value)                      # Converte Enum para string 'paga'
+                           despesa.tipo.value,                          # Converte Enum para string 'paga'
+                           despesa.fixa_id,
+                           despesa.parcelada_id
+                           )                      
 
         sql = """
-        INSERT INTO despesas (descricao, valor, vencimento, status, tipo) VALUES (?, ?, ?, ?, ?)
+        INSERT INTO despesas (descricao, valor, vencimento, status, tipo, fixa_id, parcelada_id) VALUES (?, ?, ?, ?, ?, ?, ?)
         """
         try:
             self.cursor.execute(sql, valores_despesa)
@@ -139,3 +157,88 @@ class Db_Despesa:
         except Exception as e:
             print(f"Erro ao ler banco: {e}")
             return Result.erro(mensagem=f"Erro ao carregar despesas: {e}")
+        
+# CRUD DESPESAS FIXA
+
+    def salvar_despesa_fixa(self, despesa:  DespesaFixa):
+        valores_despesa = (
+            despesa.descricao,
+            despesa.valor,
+            despesa.dia_vencimento,
+        )
+        sql = """
+        INSERT INTO fixas (descricao, valor, dia_vencimento) VALUES (?, ?, ?)
+        """
+
+        try:
+            self.cursor.execute(sql, valores_despesa)
+            self.conexao.commit()
+            return Result.ok(mensagem="Despesa salva com sucesso!")
+        except Exception as e:
+            print(f"Erro ao salvar: {e}")
+            self.conexao.rollback()
+            return Result.erro(mensagem=f"Erro ao salvar os dados: {e}")
+        
+    def deletar_despesa_fixa(self, id):
+        sql = """
+        DELETE FROM fixas WHERE id = ?
+        """
+        try:
+            self.cursor.execute(sql, (id,))
+            # O rowcount diz quantas linhas foram afetadas
+            if self.cursor.rowcount == 0:
+                return Result.erro(mensagem="Nenhuma despesa encontrada com este ID.")
+            
+            self.conexao.commit()
+            return Result.ok(mensagem="Despesa deletada!")
+        
+        except Exception as e:
+            print(f"Erro ao deletar: {e}")
+            self.conexao.rollback()
+            return Result.erro(mensagem=f"Erro ao deletar a despesa: {e}")
+    
+    def editar_despesa_fixa(self, despesa: DespesaFixa):
+        sql = """
+        UPDATE fixas 
+        SET descricao = ?, valor = ?, dia_vencimento = ?
+        WHERE id = ?
+        """
+        parametros = (
+            despesa.descricao,
+            despesa.valor,
+            despesa.dia_vencimento,
+            despesa.id
+            )
+        try:
+            self.cursor.execute(sql, parametros)
+            self.conexao.commit()
+            return Result.ok(mensagem="Despesa editada com sucesso!")
+        except Exception as e:
+            self.conexao.rollback()
+            return Result.erro(mensagem=f"Falha na edição: {e}")
+        
+    def ler_todas_despesas_fixas(self):
+        sql = """
+        SELECT id, descricao, valor, dia_vencimento FROM fixas
+        """
+        try:
+            self.cursor.execute(sql)
+            linhas = self.cursor.fetchall() # Pega todas as linhas encontradas
+            
+            despesas = []
+            for linha in linhas:
+                despesa = DespesaFixa(
+                    id=linha[0],
+                    descricao=linha[1],
+                    valor=linha[2],
+                    dia_vencimento=(linha[3]),
+                    
+                )
+                despesas.append(despesa)
+                
+            return Result.ok(dados=despesas, mensagem="Dados recuperados com sucesso") # Retorna a lista de objetos
+        
+        except Exception as e:
+            print(f"Erro ao ler banco: {e}")
+            return Result.erro(mensagem=f"Erro ao carregar despesas: {e}")
+        
