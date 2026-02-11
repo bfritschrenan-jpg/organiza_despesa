@@ -83,8 +83,9 @@ class Db_Despesa:
         """
         try:
             self.cursor.execute(sql, valores_despesa)
+            despesa_id = self.cursor.lastrowid
             self.conexao.commit()
-            return Result.ok(mensagem="Despesa salva com sucesso!")
+            return Result.ok(mensagem="Despesa salva com sucesso!", dados=despesa_id)
         except Exception as e:
             print(f"Erro ao salvar: {e}")
             self.conexao.rollback()

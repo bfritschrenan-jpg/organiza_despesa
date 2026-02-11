@@ -47,13 +47,13 @@ class Despesa:
         # Garante que agora é datetime mesmo
         if not isinstance(self.vencimento, date):
              raise TypeError("Erro: O campo 'vencimento' deve ser um objeto datetime ou string válida.")
-        
+                
         if self.fixa_id is not None:
-             if not type(self.fixa_id) is not int or self.fixa_id <= 0:
+            if (not isinstance(self.fixa_id, int)) or (self.fixa_id <= 0):
                 raise ValueError("Error: O fixa_id deve ser um numero inteiro maior que zero.")
-        
+
         if self.parcelada_id is not None:
-            if not type(self.parcelada_id) is not int or self.parcelada_id <= 0:
+            if (not isinstance(self.parcelada_id, int)) or (self.parcelada_id <= 0):
                 raise ValueError("Error: O parcelada_id deve ser um numero inteiro maior que zero.")
 
 

@@ -5,16 +5,17 @@ from src.utils.resultado import Result
 class GerenciadorDespesa:
     
     def criar_despesa(self, descricao: str, valor: float, vencimento: str, status: str, tipo: str, fixa_id: int = None, parcelada_id: int = None):
-
+        
         try:
-            despesa = Despesa(descricao, 
-                              valor, 
-                              vencimento,
-                              Status(status), 
-                              Tipo(tipo),
-                              fixa_id,
-                              parcelada_id,
-                              )
+            despesa = Despesa(
+                descricao=descricao, 
+                valor=valor, 
+                vencimento=vencimento,
+                status=Status(status), 
+                tipo=Tipo(tipo),
+                fixa_id=fixa_id,
+                parcelada_id=parcelada_id,
+                )
             
         except Exception as e:
             return Result.erro(f"Erro de validação: {e}")
