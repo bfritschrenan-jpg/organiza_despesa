@@ -237,13 +237,7 @@ class TelaCadastrarDespesa(ft.Container):
         data_vencimento = self.data_vencimento.value
         qtd_parcelas = self.caixa_qtd_parcelas.value
 
-        if tipo == "Fixa":
-           resposta = self.gerenciador.salvar_despesa_fixa(descricao, valor, data_vencimento)
-           if resposta.sucesso == True:
-               print(resposta.sucesso)
-               self.app_flet.page.update()
-        else:
-            resposta = self.gerenciador.salvar_despesa(descricao, valor, data_vencimento, tipo, qtd_parcelas)
-            if resposta.sucesso == True:
-               print(resposta.sucesso)
-               self.app_flet.page.update()
+        resposta = self.gerenciador.salvar_despesa(descricao, valor, data_vencimento, tipo, qtd_parcelas)
+        if resposta.sucesso == True:
+            print(resposta.sucesso)
+            self.app_flet.page.update()

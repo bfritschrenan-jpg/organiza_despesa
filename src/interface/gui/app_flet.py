@@ -4,7 +4,7 @@ from src.interface.gui.tela_inicio import TelaInicial
 from src.interface.gui.tela_cadastrar_despesa import TelaCadastrarDespesa
 from src.interface.gui.componentes.data_picker import Gerenciador
 from src.interface.gui.servicos.service_interface import GerenciadorDespesaInterface
-from src.interface.gui.tela_despesa import TelaDespesa
+from src.interface.gui.tela_editar_despesa import TelaDespesa
             
 
 class AppFlet():

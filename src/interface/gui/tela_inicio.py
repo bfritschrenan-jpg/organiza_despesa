@@ -1,5 +1,5 @@
 import flet as ft
-from src.interface.gui.tela_despesa import TelaDespesa
+from src.interface.gui.tela_editar_despesa import TelaDespesa
 
 class TelaInicial(ft.Container):
     def __init__(self, appflet: object):
@@ -29,7 +29,6 @@ class TelaInicial(ft.Container):
 
         self.appflet.container.content = TelaDespesa(app_flet=self.appflet, despesa=despesa) # Cria a tela para editar a despesa
         self.appflet.page.update() # Atualiza para mostrar a tela
-
 
     def cabecalho(self):
         return ft.ShaderMask(                   

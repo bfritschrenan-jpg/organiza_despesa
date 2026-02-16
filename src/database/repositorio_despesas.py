@@ -112,7 +112,7 @@ class Db_Despesa:
     def editar_despesa(self, despesa: Despesa):
         sql = """
         UPDATE despesas 
-        SET descricao = ?, valor = ?, vencimento = ?, status = ?, tipo = ?
+        SET descricao = ?, valor = ?, vencimento = ?, status = ?, tipo = ?, parcelada_id = ?
         WHERE id = ?
         """
         parametros = (
@@ -120,7 +120,8 @@ class Db_Despesa:
             despesa.valor, 
             str(despesa.vencimento),        #.isoformat(), 
             despesa.status.value, 
-            despesa.tipo.value, 
+            despesa.tipo.value,
+            despesa.parcelada_id, 
             despesa.id
         )
         
@@ -134,7 +135,7 @@ class Db_Despesa:
         
     def ler_todas_despesa(self):
         sql = """
-        SELECT id, descricao, valor, vencimento, status, tipo FROM despesas
+        SELECT id, descricao, valor, vencimento, status, tipo, fixa_id, parcelada_id FROM despesas
         """
         try:
             self.cursor.execute(sql)
@@ -149,7 +150,9 @@ class Db_Despesa:
                     valor=linha[2],
                     vencimento=date.fromisoformat(linha[3]),
                     status=Status(linha[4]),
-                    tipo=Tipo(linha[5])
+                    tipo=Tipo(linha[5]),
+                    fixa_id=linha[6],
+                    parcelada_id=linha[7]
                 )
                 despesas.append(d)
                 
@@ -158,6 +161,30 @@ class Db_Despesa:
         except Exception as e:
             print(f"Erro ao ler banco: {e}")
             return Result.erro(mensagem=f"Erro ao carregar despesas: {e}")
+    
+    def buscar_despesa_por_id(self, id):
+        sql = """
+        SELECT * FROM despesas WHERE id = ?
+        """
+        id = (id,)
+        try:
+    
+            self.cursor.execute(sql, id)
+            despesa = self.cursor.fetchone()
+            despesa_obj = Despesa(
+                    id=despesa[0],
+                    descricao=despesa[1],
+                    valor=despesa[2],
+                    vencimento=date.fromisoformat(despesa[3]),
+                    status=Status(despesa[4]),
+                    tipo=Tipo(despesa[5]),
+                    fixa_id=despesa[6],
+                    parcelada_id=despesa[7]
+                )
+            return Result.ok(dados=despesa_obj, mensagem="Despesa encontrada com sucesso!")
+        except Exception as e:
+            print(f"Erro ao ler banco despesa por ID: {e}")
+            return Result.erro(mensagem=f"Falha na busca: {e}")
         
 # CRUD DESPESAS FIXA
 

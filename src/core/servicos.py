@@ -39,6 +39,10 @@ class GerenciadorDespesa:
             resposta = banco.ler_todas_despesa()
             return resposta
         
+    def buscar_despesa_id_service(self, id):
+        with Db_Despesa() as banco:
+            resposta = banco.buscar_despesa_por_id(id=id)
+            return resposta
 # CRUD FIXAS
         
     def criar_despesa_fixa(self, descricao: str, valor: float, dia_vencimento: int):
